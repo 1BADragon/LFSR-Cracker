@@ -6,6 +6,9 @@
 #include <QPushButton>
 #include <QTextDocument>
 #include <QSpinBox>
+#include <QLabel>
+#include <QWidget>
+#include <QTextBrowser>
 
 class MainWindow : public QMainWindow
 {
@@ -18,6 +21,10 @@ private:
     QPushButton *random;
     QTextDocument *result;
     QSpinBox *rounds;
+    QLabel *polyLable;
+    QLabel *startValueLabel;
+    QLabel *roundsLabel;
+    QTextBrowser *resultViewer;
 
 public slots:
 
