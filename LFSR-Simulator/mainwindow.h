@@ -9,24 +9,34 @@
 #include <QLabel>
 #include <QWidget>
 #include <QTextBrowser>
+#include <QList>
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 private:
-    QLineEdit *poly;
-    QLineEdit *startValue;
-    QPushButton *generate;
-    QPushButton *random;
-    QTextDocument *result;
-    QSpinBox *rounds;
+    QLineEdit *polyField;
+    QLineEdit *startValueField;
+    QPushButton *generateButton;
+    QPushButton *randomButton;
+    QTextDocument *resultDoc;
+    QSpinBox *roundsBox;
     QLabel *polyLable;
     QLabel *startValueLabel;
     QLabel *roundsLabel;
     QTextBrowser *resultViewer;
 
+    QList<bool> *polyData;
+    QList<bool> *initData;
+
+    bool checkInput(QString input);
+    QList<bool>* convertData(QString input);
+    void generateOutput();
+
 public slots:
+    void generate_f();
+    void random_f();
 
 public:
     MainWindow(QWidget *parent = 0);
