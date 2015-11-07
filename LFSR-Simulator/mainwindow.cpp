@@ -50,6 +50,11 @@ void MainWindow::generate_f(){
     QString polyString = polyField->text();
     QString startString = polyField->text();
 
+    if(polyString.length() != startString.length()){
+        resultDoc->setPlainText("Invalid Input");
+        return;
+    }
+
     if(!checkInput(polyString)){
         return;
     }
@@ -100,5 +105,33 @@ QList<bool>* MainWindow::convertData(QString input){
 }
 
 void MainWindow::generateOutput(){
-
+    QList<bool> *output = new QList<bool>();
+    int rounds = roundsBox->value();
+    bool curr;
+    for(int i = 0; i < rounds; i++){
+        curr = false;
+        for(int j = 0; j < polyData->length(); j++){
+            if(polyData->at(j)){
+                curr ^= initData->at(j);
+            }
+        }
+        output->append(initData->first());
+        initData->pop_front();
+        initData->push_back(curr);
+    }
+    QString outputString = "";
+    for(int i = 0; i < output->length(); i++){
+        if(output->at(i)){
+            outputString.append('1');
+        } else {
+            outputString.append('0');
+        }
+    }
+    resultDoc->setPlainText(outputString);
+    return;
 }
+
+
+
+
+
