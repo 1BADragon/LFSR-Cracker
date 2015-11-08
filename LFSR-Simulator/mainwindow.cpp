@@ -28,13 +28,13 @@ MainWindow::MainWindow(QWidget *parent)
     randomButton->setText("Random");
 
     roundsBox->setGeometry(135,100,75,25);
-    roundsBox->setValue(0);
+    roundsBox->setValue(10);
     roundsBox->setMinimum(0);
     roundsBox->setMaximum(10000000);
 
     roundsLabel->setGeometry(90,100,70,25);
 
-    resultViewer->setGeometry(5,150,290,370);
+    resultViewer->setGeometry(5,150,290,345);
     resultViewer->setDocument(resultDoc);
 
     connect(generateButton, SIGNAL(clicked(bool)), this, SLOT(generate_f()));
@@ -48,12 +48,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::generate_f(){
     QString polyString = polyField->text();
-    QString startString = polyField->text();
+    QString startString = startValueField->text();
 
-    if(polyString.length() != startString.length()){
-        resultDoc->setPlainText("Invalid Input");
-        return;
-    }
+//    if(polyString.length() != startString.length()){
+//        resultDoc->setPlainText("Invalid Input");
+//        return;
+//    }
 
     if(!checkInput(polyString)){
         return;
@@ -67,7 +67,7 @@ void MainWindow::generate_f(){
         return;
     }
 
-    if((initData = convertData(startString)) == NULL){
+    if((data = convertData(startString)) == NULL){
         resultDoc->setPlainText("Invalid Input");
         return;
     }
@@ -105,27 +105,23 @@ QList<bool>* MainWindow::convertData(QString input){
 }
 
 void MainWindow::generateOutput(){
-    QList<bool> *output = new QList<bool>();
     int rounds = roundsBox->value();
     bool curr;
+    QString outputString = "";
     for(int i = 0; i < rounds; i++){
         curr = false;
         for(int j = 0; j < polyData->length(); j++){
             if(polyData->at(j)){
-                curr ^= initData->at(j);
+                curr ^= data->at(j);
             }
         }
-        output->append(initData->first());
-        initData->pop_front();
-        initData->push_back(curr);
-    }
-    QString outputString = "";
-    for(int i = 0; i < output->length(); i++){
-        if(output->at(i)){
+        if(data->first()){
             outputString.append('1');
         } else {
             outputString.append('0');
-        }
+        }        
+        data->pop_front();
+        data->push_back(curr);
     }
     resultDoc->setPlainText(outputString);
     return;

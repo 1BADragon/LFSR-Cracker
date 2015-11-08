@@ -10,6 +10,7 @@
 #include <QWidget>
 #include <QTextBrowser>
 #include <QList>
+#include <QApplication>
 
 class MainWindow : public QMainWindow
 {
@@ -28,7 +29,7 @@ private:
     QTextBrowser *resultViewer;
 
     QList<bool> *polyData;
-    QList<bool> *initData;
+    QList<bool> *data;
 
     bool checkInput(QString input);
     QList<bool>* convertData(QString input);
