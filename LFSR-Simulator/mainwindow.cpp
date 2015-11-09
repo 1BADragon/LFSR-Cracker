@@ -50,10 +50,10 @@ void MainWindow::generate_f(){
     QString polyString = polyField->text();
     QString startString = startValueField->text();
 
-//    if(polyString.length() != startString.length()){
-//        resultDoc->setPlainText("Invalid Input");
-//        return;
-//    }
+    if(polyString.length() > startString.length()){
+        resultDoc->setPlainText("Invalid Input");
+        return;
+    }
 
     if(!checkInput(polyString)){
         return;
@@ -77,7 +77,26 @@ void MainWindow::generate_f(){
 
 void MainWindow::random_f()
 {
+    srand(time(NULL));
+    int size = rand() % 50;
+    QString polyValue;
+    QString initValue;
+    for(int i = 0; i < size; i++){
+        if(rand() % 2){
+            polyValue.append('1');
+        } else {
+            polyValue.append('0');
+        }
 
+        if(rand() % 2){
+            initValue.append('1');
+        } else {
+            initValue.append('0');
+        }
+    }
+    polyField->setText(polyValue);
+    startValueField->setText(initValue);
+    generate_f();
 }
 
 bool MainWindow::checkInput(QString input){
@@ -85,8 +104,6 @@ bool MainWindow::checkInput(QString input){
         resultDoc->setPlainText("Invalid Input");
         return false;
     }
-
-
     return true;
 }
 
@@ -109,7 +126,7 @@ void MainWindow::generateOutput(){
     bool curr;
     QString outputString = "";
     for(int i = 0; i < rounds; i++){
-        curr = false;
+        curr = data->first();
         for(int j = 0; j < polyData->length(); j++){
             if(polyData->at(j)){
                 curr ^= data->at(j);

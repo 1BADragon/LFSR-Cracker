@@ -11,6 +11,8 @@
 #include <QTextBrowser>
 #include <QList>
 #include <QApplication>
+#include <cstdlib>
+#include <time.h>
 
 class MainWindow : public QMainWindow
 {
