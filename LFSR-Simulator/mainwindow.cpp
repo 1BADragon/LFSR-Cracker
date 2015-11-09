@@ -50,7 +50,7 @@ void MainWindow::generate_f(){
     QString polyString = polyField->text();
     QString startString = startValueField->text();
 
-    if(polyString.length() > startString.length()){
+    if(polyString.length() != startString.length()){
         resultDoc->setPlainText("Invalid Input");
         return;
     }
@@ -71,6 +71,8 @@ void MainWindow::generate_f(){
         resultDoc->setPlainText("Invalid Input");
         return;
     }
+
+    std::reverse(polyData->begin(), polyData->end());
 
     generateOutput();
 }
@@ -127,7 +129,7 @@ void MainWindow::generateOutput(){
     QString outputString = "";
     for(int i = 0; i < rounds; i++){
         curr = data->first();
-        for(int j = 0; j < polyData->length(); j++){
+        for(int j = 1; j < polyData->length(); j++){
             if(polyData->at(j)){
                 curr ^= data->at(j);
             }
