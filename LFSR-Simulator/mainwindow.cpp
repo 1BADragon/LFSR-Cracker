@@ -50,6 +50,8 @@ void MainWindow::generate_f(){
     QString polyString = polyField->text();
     QString startString = startValueField->text();
 
+    polyString.remove(0,1);
+
     if(polyString.length() != startString.length()){
         resultDoc->setPlainText("Invalid Input");
         return;
@@ -126,7 +128,22 @@ QList<bool>* MainWindow::convertData(QString input){
 void MainWindow::generateOutput(){
     int rounds = roundsBox->value();
     bool curr;
-    QString outputString = "";
+    QString outputString = "1\n";
+    QString temp;
+    for (int i = 1; i < polyData->length(); i++){
+        if(polyData->at(i)){
+            temp = "";
+            temp = "x";
+            if(i != 1){
+                temp += "^" + QString::number(i) + "+";
+            }else{
+                temp += "+";
+            }
+            outputString.push_front(temp);
+        }
+    }
+    outputString.push_front("x^" + QString::number(polyData->length()) + "+");
+    outputString.push_front("Interpreting poly as: ");
     for(int i = 0; i < rounds; i++){
         curr = data->first();
         for(int j = 1; j < polyData->length(); j++){
