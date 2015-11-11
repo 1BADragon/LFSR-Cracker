@@ -11,6 +11,8 @@
 #include <QApplication>
 #include <QDebug>
 
+#include <cmath>
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -32,6 +34,7 @@ private:
     bool checkInput(QString input);
     QList<bool> *convertString(QString input);
     int determineSequence(QList<bool>* data);
+    void generateOutput();
 
 public slots:
     void solve();

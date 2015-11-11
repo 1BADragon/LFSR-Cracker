@@ -74,8 +74,18 @@ void MainWindow::solve()
 
     QList<bool> *inputData = convertString(input);
     int sequenceSize = determineSequence(inputData);
+    int maxInitSize = sequenceSize;
+    int minInitSize = log2(sequenceSize+1);
 
+    QList<bool> *sequence = convertString(sequenceDoc->toPlainText());
+    QList<bool> tempInitData;
+    QString test = "";
+    for(int i = minInitSize; i <= maxInitSize; i++)
+    {
+        tempInitData = sequence->mid(0, i);
 
+    }
+    initDoc->setPlainText(test);
 }
 
 int MainWindow::determineSequence(QList<bool> *data)
@@ -143,4 +153,44 @@ bool MainWindow::checkInput(QString input)
         }
     }
     return true;
+}
+
+void MainWindow::generateOutput(){
+    /*
+    int rounds = roundsBox->value();
+    bool curr;
+    QString outputString = "1\n";
+    QString temp;
+    for (int i = 1; i < polyData->length(); i++){
+        if(polyData->at(i)){
+            temp = "";
+            temp = "x";
+            if(i != 1){
+                temp += "^" + QString::number(i) + "+";
+            }else{
+                temp += "+";
+            }
+            outputString.push_front(temp);
+        }
+    }
+    outputString.push_front("x^" + QString::number(polyData->length()) + "+");
+    outputString.push_front("Interpreting poly as: ");
+    for(int i = 0; i < rounds; i++){
+        curr = data->first();
+        for(int j = 1; j < polyData->length(); j++){
+            if(polyData->at(j)){
+                curr ^= data->at(j);
+            }
+        }
+        if(data->first()){
+            outputString.append('1');
+        } else {
+            outputString.append('0');
+        }
+        data->pop_front();
+        data->push_back(curr);
+    }
+    resultDoc->setPlainText(outputString);
+    return;
+    */
 }
