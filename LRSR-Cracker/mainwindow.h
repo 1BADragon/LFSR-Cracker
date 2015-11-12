@@ -32,9 +32,10 @@ private:
     QTextBrowser *initResult;
 
     bool checkInput(QString input);
-    QList<bool> *convertString(QString input);
+    QList<bool>* convertString(QString input);
     int determineSequence(QList<bool>* data);
-    void generateOutput();
+    QList<bool>* generateOutput(QList<bool> *init, QList<bool> *poly, int round);
+    QString* convertList(QList<bool>* data);
 
 public slots:
     void solve();

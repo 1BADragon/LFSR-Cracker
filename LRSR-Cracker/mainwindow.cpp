@@ -74,18 +74,62 @@ void MainWindow::solve()
 
     QList<bool> *inputData = convertString(input);
     int sequenceSize = determineSequence(inputData);
+    qApp->processEvents();
     int maxInitSize = sequenceSize;
     int minInitSize = log2(sequenceSize+1);
 
+    //qDebug() << maxInitSize << minInitSize;
+
     QList<bool> *sequence = convertString(sequenceDoc->toPlainText());
-    QList<bool> tempInitData;
-    QString test = "";
+    QList<bool> *tempOutput = NULL;
+    QList<bool> *initData = new QList<bool>();
+    QList<bool> *tempInitData = new QList<bool>();
+    QString tempPoly;
+    bool escape = false;
     for(int i = minInitSize; i <= maxInitSize; i++)
     {
-        tempInitData = sequence->mid(0, i);
+        initData->clear();
+        initData->append(sequence->mid(0, i));
+        long range = pow(2, initData->length());
+        for(int j = 2; j < range; j++)
+        {
+            tempPoly = QString::number(j,2);
+            while(tempPoly.length() < initData->length())
+            {
+                tempPoly.prepend('0');
+            }
+            //qDebug() << tempPoly << QString::fromStdString(convertList(initData)->toStdString());
+            tempInitData->clear();
+            tempInitData->append(*initData);
+            if(tempOutput != NULL)
+            {
+                delete tempOutput;
+            }
+            tempOutput = generateOutput(tempInitData,convertString(QString::number(j,2)),inputData->length());
+            //qDebug() << *convertList(tempOutput) << ((*tempOutput) == (*inputData));
 
+            if((*tempOutput) == (*inputData))
+            {
+                qDebug() << *convertList(tempOutput);
+                escape = true;
+                break;
+            }
+        }
+        if(escape)
+        {
+            break;
+        }
     }
-    initDoc->setPlainText(test);
+    if(escape)
+    {
+        initDoc->setPlainText(*convertList(initData));
+        polyDoc->setPlainText(tempPoly);
+    }
+    else
+    {
+        initDoc->setPlainText("No Solution Found");
+        polyDoc->setPlainText("No Solution Found");
+    }
 }
 
 int MainWindow::determineSequence(QList<bool> *data)
@@ -155,42 +199,37 @@ bool MainWindow::checkInput(QString input)
     return true;
 }
 
-void MainWindow::generateOutput(){
-    /*
-    int rounds = roundsBox->value();
+QList<bool>* MainWindow::generateOutput(QList<bool> *init, QList<bool> *poly, int rounds)
+{
     bool curr;
-    QString outputString = "1\n";
-    QString temp;
-    for (int i = 1; i < polyData->length(); i++){
-        if(polyData->at(i)){
-            temp = "";
-            temp = "x";
-            if(i != 1){
-                temp += "^" + QString::number(i) + "+";
-            }else{
-                temp += "+";
-            }
-            outputString.push_front(temp);
-        }
-    }
-    outputString.push_front("x^" + QString::number(polyData->length()) + "+");
-    outputString.push_front("Interpreting poly as: ");
+    QList<bool> *output = new QList<bool>();
     for(int i = 0; i < rounds; i++){
-        curr = data->first();
-        for(int j = 1; j < polyData->length(); j++){
-            if(polyData->at(j)){
-                curr ^= data->at(j);
+        curr = init->first();
+        for(int j = 1; j < poly->length(); j++){
+            if(poly->at(j)){
+                curr ^= init->at(j);
             }
         }
-        if(data->first()){
-            outputString.append('1');
-        } else {
-            outputString.append('0');
-        }
-        data->pop_front();
-        data->push_back(curr);
+        output->append(curr);
+        init->pop_front();
+        init->push_back(curr);
     }
-    resultDoc->setPlainText(outputString);
-    return;
-    */
+    return output;
+}
+
+QString* MainWindow::convertList(QList<bool> *data)
+{
+    QString *output = new QString();
+    for(int i = 0; i < data->length(); i++)
+    {
+        if(data->at(i))
+        {
+            output->append('1');
+        }
+        else
+        {
+            output->append('0');
+        }
+    }
+    return output;
 }
