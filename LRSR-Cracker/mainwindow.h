@@ -31,18 +31,24 @@ private:
     QTextDocument *initDoc;
     QTextBrowser *initResult;
 
+    QList<bool> *inputData;
+
     bool checkInput(QString input);
     QList<bool>* convertString(QString input);
     int determineSequence(QList<bool>* data);
     QList<bool>* generateOutput(QList<bool> *init, QList<bool> *poly, int round);
     QString* convertList(QList<bool>* data);
+    int solve();
+    void arrayCopy(bool* a, bool* b, int size);
 
 public slots:
-    void solve();
+    void go();
 
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();    
 };
+
+
 
 #endif // MAINWINDOW_H

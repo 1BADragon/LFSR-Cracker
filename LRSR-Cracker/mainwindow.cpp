@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent)
     initResult->setGeometry(335,170,260,50);
     initResult->setDocument(initDoc);
 
-    connect(solveButton,SIGNAL(clicked(bool)), this, SLOT(solve()));
+    connect(solveButton,SIGNAL(clicked(bool)), this, SLOT(go()));
 }
 
 MainWindow::~MainWindow()
@@ -54,7 +54,7 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::solve()
+void MainWindow::go()
 {
     QString input = inputField->document()->toPlainText();
 
@@ -72,64 +72,67 @@ void MainWindow::solve()
         return;
     }
 
-    QList<bool> *inputData = convertString(input);
-    int sequenceSize = determineSequence(inputData);
-    qApp->processEvents();
-    int maxInitSize = sequenceSize;
-    int minInitSize = log2(sequenceSize+1);
+    inputData = convertString(input);
+    int result = solve();
+    polyDoc->setPlainText(QString::number(result,2));
 
-    //qDebug() << maxInitSize << minInitSize;
+//    int sequenceSize = determineSequence(inputData);
+//    qApp->processEvents();
+//    int maxInitSize = sequenceSize;
+//    int minInitSize = log2(sequenceSize+1);
 
-    QList<bool> *sequence = convertString(sequenceDoc->toPlainText());
-    QList<bool> *tempOutput = NULL;
-    QList<bool> *initData = new QList<bool>();
-    QList<bool> *tempInitData = new QList<bool>();
-    QString tempPoly;
-    bool escape = false;
-    for(int i = minInitSize; i <= maxInitSize; i++)
-    {
-        initData->clear();
-        initData->append(sequence->mid(0, i));
-        long range = pow(2, initData->length());
-        for(int j = 2; j < range; j++)
-        {
-            tempPoly = QString::number(j,2);
-            while(tempPoly.length() < initData->length())
-            {
-                tempPoly.prepend('0');
-            }
-            //qDebug() << tempPoly << QString::fromStdString(convertList(initData)->toStdString());
-            tempInitData->clear();
-            tempInitData->append(*initData);
-            if(tempOutput != NULL)
-            {
-                delete tempOutput;
-            }
-            tempOutput = generateOutput(tempInitData,convertString(QString::number(j,2)),inputData->length());
-            //qDebug() << *convertList(tempOutput) << ((*tempOutput) == (*inputData));
+//    //qDebug() << maxInitSize << minInitSize;
 
-            if((*tempOutput) == (*inputData))
-            {
-                qDebug() << *convertList(tempOutput);
-                escape = true;
-                break;
-            }
-        }
-        if(escape)
-        {
-            break;
-        }
-    }
-    if(escape)
-    {
-        initDoc->setPlainText(*convertList(initData));
-        polyDoc->setPlainText(tempPoly);
-    }
-    else
-    {
-        initDoc->setPlainText("No Solution Found");
-        polyDoc->setPlainText("No Solution Found");
-    }
+//    QList<bool> *sequence = convertString(sequenceDoc->toPlainText());
+//    QList<bool> *tempOutput = NULL;
+//    QList<bool> *initData = new QList<bool>();
+//    QList<bool> *tempInitData = new QList<bool>();
+//    QString tempPoly;
+//    bool escape = false;
+//    for(int i = minInitSize; i <= maxInitSize; i++)
+//    {
+//        initData->clear();
+//        initData->append(sequence->mid(0, i));
+//        long range = pow(2, initData->length());
+//        for(int j = 2; j < range; j++)
+//        {
+//            tempPoly = QString::number(j,2);
+//            while(tempPoly.length() < initData->length())
+//            {
+//                tempPoly.prepend('0');
+//            }
+//            //qDebug() << tempPoly << QString::fromStdString(convertList(initData)->toStdString());
+//            tempInitData->clear();
+//            tempInitData->append(*initData);
+//            if(tempOutput != NULL)
+//            {
+//                delete tempOutput;
+//            }
+//            tempOutput = generateOutput(tempInitData,convertString(QString::number(j,2)),inputData->length());
+//            //qDebug() << *convertList(tempOutput) << ((*tempOutput) == (*inputData));
+
+//            if((*tempOutput) == (*inputData))
+//            {
+//                qDebug() << *convertList(tempOutput);
+//                escape = true;
+//                break;
+//            }
+//        }
+//        if(escape)
+//        {
+//            break;
+//        }
+//    }
+//    if(escape)
+//    {
+//        initDoc->setPlainText(*convertList(initData));
+//        polyDoc->setPlainText(tempPoly);
+//    }
+//    else
+//    {
+//        initDoc->setPlainText("No Solution Found");
+//        polyDoc->setPlainText("No Solution Found");
+//    }
 }
 
 int MainWindow::determineSequence(QList<bool> *data)
@@ -233,3 +236,54 @@ QString* MainWindow::convertList(QList<bool> *data)
     }
     return output;
 }
+
+// BERLEKAMP-MASSEY ALGORITHM
+int MainWindow::solve()
+{
+    QList<bool> *s = this->inputData;
+    int L, N, m, d;
+    int n = s->length();
+    bool* c = new bool[n];
+    bool* b = new bool[n];
+    bool* t = new bool[n];
+
+    //Initialization
+    b[0]=c[0]=1;
+    N=L=0;
+    m=-1;
+
+    while(N < n)
+    {
+        d=s->at(N);
+        for(int i=1; i <=L; i++)
+        {
+            d ^= c[i]&s->at(N-i);
+        }
+        if (d==1)
+        {
+            arrayCopy(c, t, n);
+            for(int i=0; (i+N-m)<n; i++)
+            {
+                c[i+N-m]^=b[i];
+            }
+            if(L<=(N>>1))
+            {
+                L=N+1-L;
+                m=N;
+                arrayCopy(t,b,n);
+            }
+        }
+        N++;
+    }
+    return L;
+}
+
+void MainWindow::arrayCopy(bool *src, bool *dest, int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        dest[i] = src[i];
+    }
+}
+
+
