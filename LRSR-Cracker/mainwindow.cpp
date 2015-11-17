@@ -15,34 +15,44 @@ MainWindow::MainWindow(QWidget *parent)
     solveButton->setGeometry(255,20,75,275);
     solveButton->setText("Solve\n---->");
 
-    sequenceLabel = new QLabel("Sequence:",this);
+    sequenceLabel = new QLabel("Initial Sequence",this);
     sequenceLabel->setGeometry(335,5,160,15);
 
     sequenceDoc = new QTextDocument();
-    sequenceDoc->setPlainText("Sequence will be displayed here...");
+    sequenceDoc->setPlainText("Initial Sequnce will be displayed here...");
 
     sequenceResult = new QTextBrowser(this);
     sequenceResult->setGeometry(335,20,260,50);
     sequenceResult->setDocument(sequenceDoc);
 
+    degreeLabel = new QLabel("Degree:", this);
+    degreeLabel->setGeometry(335, 80, 100, 15);
+
+    degreeValue = new QLCDNumber(this);
+    degreeValue->setGeometry(385, 75, 50, 25);
+    QPalette LCDpalette= degreeValue->palette();
+    LCDpalette.setColor(LCDpalette.WindowText,QColor(0,255,0));
+    degreeValue->setPalette(LCDpalette);
+    degreeValue->display(0);
+
     polyLabel = new QLabel("Polynomial:", this);
-    polyLabel->setGeometry(335, 80, 260, 15);
+    polyLabel->setGeometry(335, 80+35, 260, 15);
 
     polyDoc = new QTextDocument();
     polyDoc->setPlainText("Polynomial will be displayed here...");
 
     polyResult = new QTextBrowser(this);
-    polyResult->setGeometry(335,95,260,50);
+    polyResult->setGeometry(335,95+35,260,50);
     polyResult->setDocument(polyDoc);
 
     initLabel = new QLabel("Initial Value:",this);
-    initLabel->setGeometry(335, 155, 260, 15);
+    initLabel->setGeometry(335, 155+35, 260, 15);
 
     initDoc = new QTextDocument();
     initDoc->setPlainText("Initial value will be displayed here...");
 
     initResult = new QTextBrowser(this);
-    initResult->setGeometry(335,170,260,50);
+    initResult->setGeometry(335,170+35,260,50);
     initResult->setDocument(initDoc);
 
     connect(solveButton,SIGNAL(clicked(bool)), this, SLOT(go()));
@@ -72,11 +82,15 @@ void MainWindow::go()
         return;
     }
 
-    inputData = convertString(input);
-    int result = solve();
-    polyDoc->setPlainText(QString::number(result,2));
+    QList<bool> *tempData = convertString(input);
 
-//    int sequenceSize = determineSequence(inputData);
+    int sequenceSize = determineSequence(tempData);
+    inputData->clear();
+    inputData->append(tempData->mid(0,sequenceSize));
+    int result = solve();
+    sequenceDoc->setPlainText(QString::number(result));
+    delete tempData;
+
 //    qApp->processEvents();
 //    int maxInitSize = sequenceSize;
 //    int minInitSize = log2(sequenceSize+1);

@@ -10,6 +10,8 @@
 #include <QList>
 #include <QApplication>
 #include <QDebug>
+#include <QLCDNumber>
+#include <QPalette>
 
 #include <cmath>
 
@@ -30,6 +32,8 @@ private:
     QLabel *initLabel;
     QTextDocument *initDoc;
     QTextBrowser *initResult;
+    QLabel *degreeLabel;
+    QLCDNumber *degreeValue;
 
     QList<bool> *inputData;
 
