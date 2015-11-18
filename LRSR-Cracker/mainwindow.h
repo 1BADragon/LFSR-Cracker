@@ -47,7 +47,6 @@ private:
     QList<bool>* generateOutput(QList<bool> *init, QList<bool> *poly, int round);
     QString* convertList(QList<bool>* data);
     int solve();
-    void arrayCopy(byte *src, byte *dest, int size);
 
 public slots:
     void go();

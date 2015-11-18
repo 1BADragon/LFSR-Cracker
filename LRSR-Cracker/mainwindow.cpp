@@ -256,15 +256,18 @@ int MainWindow::solve()
         }
         N++;
     }
+    QString temp = "";
+    for(int i = 0; i <= L; i++)
+    {
+        if(c[i] == 1)
+        {
+            temp.append("1");
+        }
+        else
+        {
+            temp.append("0");
+        }
+    }
+    polyDoc->setPlainText(temp);
     return L;
 }
-
-void MainWindow::arrayCopy(byte *src, byte *dest, int size)
-{
-    for (int i = 0; i < size; i++)
-    {
-        dest[i] = src[i];
-    }
-}
-
-
