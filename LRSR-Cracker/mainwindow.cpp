@@ -56,6 +56,8 @@ MainWindow::MainWindow(QWidget *parent)
     initResult->setDocument(initDoc);
 
     connect(solveButton,SIGNAL(clicked(bool)), this, SLOT(go()));
+
+    inputData = new QList<bool>();
 }
 
 MainWindow::~MainWindow()
@@ -87,66 +89,16 @@ void MainWindow::go()
     int sequenceSize = determineSequence(tempData);
     inputData->clear();
     inputData->append(tempData->mid(0,sequenceSize));
+    sequenceDoc->setPlainText(*convertList(inputData));
+
     int result = solve();
-    sequenceDoc->setPlainText(QString::number(result));
+    degreeValue->display(result);
+
+    QList<bool> *initValue = new QList<bool>();
+    initValue->append(inputData->mid(0,result));
+    initDoc->setPlainText(*convertList(initValue));
     delete tempData;
-
-//    qApp->processEvents();
-//    int maxInitSize = sequenceSize;
-//    int minInitSize = log2(sequenceSize+1);
-
-//    //qDebug() << maxInitSize << minInitSize;
-
-//    QList<bool> *sequence = convertString(sequenceDoc->toPlainText());
-//    QList<bool> *tempOutput = NULL;
-//    QList<bool> *initData = new QList<bool>();
-//    QList<bool> *tempInitData = new QList<bool>();
-//    QString tempPoly;
-//    bool escape = false;
-//    for(int i = minInitSize; i <= maxInitSize; i++)
-//    {
-//        initData->clear();
-//        initData->append(sequence->mid(0, i));
-//        long range = pow(2, initData->length());
-//        for(int j = 2; j < range; j++)
-//        {
-//            tempPoly = QString::number(j,2);
-//            while(tempPoly.length() < initData->length())
-//            {
-//                tempPoly.prepend('0');
-//            }
-//            //qDebug() << tempPoly << QString::fromStdString(convertList(initData)->toStdString());
-//            tempInitData->clear();
-//            tempInitData->append(*initData);
-//            if(tempOutput != NULL)
-//            {
-//                delete tempOutput;
-//            }
-//            tempOutput = generateOutput(tempInitData,convertString(QString::number(j,2)),inputData->length());
-//            //qDebug() << *convertList(tempOutput) << ((*tempOutput) == (*inputData));
-
-//            if((*tempOutput) == (*inputData))
-//            {
-//                qDebug() << *convertList(tempOutput);
-//                escape = true;
-//                break;
-//            }
-//        }
-//        if(escape)
-//        {
-//            break;
-//        }
-//    }
-//    if(escape)
-//    {
-//        initDoc->setPlainText(*convertList(initData));
-//        polyDoc->setPlainText(tempPoly);
-//    }
-//    else
-//    {
-//        initDoc->setPlainText("No Solution Found");
-//        polyDoc->setPlainText("No Solution Found");
-//    }
+    delete initValue;
 }
 
 int MainWindow::determineSequence(QList<bool> *data)
@@ -254,12 +206,25 @@ QString* MainWindow::convertList(QList<bool> *data)
 // BERLEKAMP-MASSEY ALGORITHM
 int MainWindow::solve()
 {
-    QList<bool> *s = this->inputData;
+    QVector<byte> s(this->inputData->length());
+    for (int i = 0; i < s.length(); i++)
+    {
+         if(inputData->at(i))
+         {
+             s[i] = 1;
+         }
+         else
+         {
+             s[i] = 0;
+         }
+    }
+
     int L, N, m, d;
-    int n = s->length();
-    bool* c = new bool[n];
-    bool* b = new bool[n];
-    bool* t = new bool[n];
+
+    int n = s.size();
+    QVector<byte> c(n);
+    QVector<byte> b(n);
+    QVector<byte> t(n);
 
     //Initialization
     b[0]=c[0]=1;
@@ -268,14 +233,15 @@ int MainWindow::solve()
 
     while(N < n)
     {
-        d=s->at(N);
-        for(int i=1; i <=L; i++)
+        d=s[N];
+        for(int i=1; i <= L; i++)
         {
-            d ^= c[i]&s->at(N-i);
+            d ^= c[i]&s[N-i];
         }
         if (d==1)
         {
-            arrayCopy(c, t, n);
+            t.clear();
+            t.append(c);
             for(int i=0; (i+N-m)<n; i++)
             {
                 c[i+N-m]^=b[i];
@@ -284,7 +250,8 @@ int MainWindow::solve()
             {
                 L=N+1-L;
                 m=N;
-                arrayCopy(t,b,n);
+                b.clear();
+                b.append(t);
             }
         }
         N++;
@@ -292,7 +259,7 @@ int MainWindow::solve()
     return L;
 }
 
-void MainWindow::arrayCopy(bool *src, bool *dest, int size)
+void MainWindow::arrayCopy(byte *src, byte *dest, int size)
 {
     for (int i = 0; i < size; i++)
     {

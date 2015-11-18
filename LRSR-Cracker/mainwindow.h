@@ -12,8 +12,11 @@
 #include <QDebug>
 #include <QLCDNumber>
 #include <QPalette>
+#include <QVector>
 
 #include <cmath>
+
+typedef quint8 byte;
 
 class MainWindow : public QMainWindow
 {
@@ -36,6 +39,7 @@ private:
     QLCDNumber *degreeValue;
 
     QList<bool> *inputData;
+    //QList<bool> *polyData;
 
     bool checkInput(QString input);
     QList<bool>* convertString(QString input);
@@ -43,7 +47,7 @@ private:
     QList<bool>* generateOutput(QList<bool> *init, QList<bool> *poly, int round);
     QString* convertList(QList<bool>* data);
     int solve();
-    void arrayCopy(bool* a, bool* b, int size);
+    void arrayCopy(byte *src, byte *dest, int size);
 
 public slots:
     void go();
