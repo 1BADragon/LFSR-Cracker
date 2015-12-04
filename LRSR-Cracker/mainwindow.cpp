@@ -15,11 +15,11 @@ MainWindow::MainWindow(QWidget *parent)
     solveButton->setGeometry(255,20,75,275);
     solveButton->setText("Solve\n---->");
 
-    sequenceLabel = new QLabel("Initial Sequence",this);
+    sequenceLabel = new QLabel("Sequence",this);
     sequenceLabel->setGeometry(335,5,160,15);
 
     sequenceDoc = new QTextDocument();
-    sequenceDoc->setPlainText("Initial Sequnce will be displayed here...");
+    sequenceDoc->setPlainText("Sequnce will be displayed here...");
 
     sequenceResult = new QTextBrowser(this);
     sequenceResult->setGeometry(335,20,260,50);
@@ -92,7 +92,7 @@ void MainWindow::go()
     sequenceDoc->setPlainText(*convertList(inputData));
 
     int result = solve();
-    degreeValue->display(result);
+    degreeValue->display(result+1);
 
     QList<bool> *initValue = new QList<bool>();
     initValue->append(inputData->mid(0,result));

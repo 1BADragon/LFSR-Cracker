@@ -13,6 +13,7 @@
 #include <QApplication>
 #include <cstdlib>
 #include <time.h>
+#include <QDebug>
 
 class MainWindow : public QMainWindow
 {

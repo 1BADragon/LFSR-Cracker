@@ -142,6 +142,7 @@ void MainWindow::generateOutput(){
             outputString.push_front(temp);
         }
     }
+    qDebug() << polyData->length();
     outputString.push_front("x^" + QString::number(polyData->length()) + "+");
     outputString.push_front("Interpreting poly as: ");
     for(int i = 0; i < rounds; i++){
